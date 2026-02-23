@@ -4,19 +4,28 @@ import {
   filterProducts,
 } from "../features/products/services/productService";
 import ProductCard from "../features/products/components/ProductCard";
+import { useSearchParams } from "react-router-dom";
 
 export default function ProductsPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(1);
 
   // Basic state — not wired to filterProducts yet (student task)
-  const [search, setSearch] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [sortBy, setSortBy] = useState("title");
-  const [sortOrder, setSortOrder] = useState("asc");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [search, setSearch] = useState(searchParams.get("search") || "");
+  const [selectedCategory, setSelectedCategory] = useState(
+    searchParams.get("category") || "",
+  );
+  const [sortBy, setSortBy] = useState(searchParams.get("sortBy") || "title");
+  const [sortOrder, setSortOrder] = useState(
+    searchParams.get("sortOrder") || "asc",
+  );
+  const [currentPage, setCurrentPage] = useState(
+    Number(searchParams.get("page")) || 1,
+  );
   const productsPerPage = 8;
 
   useEffect(() => {
@@ -33,6 +42,7 @@ export default function ProductsPage() {
         page: currentPage,
         limit: productsPerPage,
       });
+      setSearchParams(searchParams);
       if (isMounted) {
         setProducts(data);
         setTotalPages(totalPages);
@@ -48,7 +58,15 @@ export default function ProductsPage() {
     return () => {
       isMounted = false;
     };
-  }, [search, selectedCategory, sortBy, sortOrder, currentPage]);
+  }, [
+    search,
+    selectedCategory,
+    sortBy,
+    sortOrder,
+    currentPage,
+    searchParams,
+    setSearchParams,
+  ]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -83,6 +101,7 @@ export default function ProductsPage() {
               placeholder="Search products..."
               value={search}
               onChange={(e) => {
+                searchParams.set("search", e.target.value);
                 setSearch(e.target.value);
                 setCurrentPage(1);
               }}
@@ -92,9 +111,10 @@ export default function ProductsPage() {
 
           {/* Category Filter */}
           <select
-            value={selectedCategory}
+            value={selectedCategory || searchParams.get("category") || ""}
             onChange={(e) => {
               setSelectedCategory(e.target.value);
+              searchParams.set("category", e.target.value);
               setCurrentPage(1);
             }}
             className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white"
@@ -113,6 +133,8 @@ export default function ProductsPage() {
             onChange={(e) => {
               const [by, order] = e.target.value.split("-");
               setCurrentPage(1);
+              searchParams.set("sortBy", by);
+              searchParams.set("sortOrder", order);
               setSortBy(by);
               setSortOrder(order);
             }}
@@ -166,7 +188,10 @@ export default function ProductsPage() {
           {totalPages > 1 && (
             <div className="flex items-center justify-center gap-2">
               <button
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                onClick={() => {
+                  setCurrentPage((p) => Math.max(1, p - 1));
+                  searchParams.set("page", Math.max(1, currentPage - 1));
+                }}
                 disabled={currentPage === 1}
                 className="px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
@@ -176,7 +201,10 @@ export default function ProductsPage() {
                 (pageNum) => (
                   <button
                     key={pageNum}
-                    onClick={() => setCurrentPage(pageNum)}
+                    onClick={() => {
+                      setCurrentPage(pageNum);
+                      searchParams.set("page", pageNum);
+                    }}
                     className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors ${
                       currentPage === pageNum
                         ? "bg-primary-600 text-white"
@@ -188,9 +216,13 @@ export default function ProductsPage() {
                 ),
               )}
               <button
-                onClick={() =>
-                  setCurrentPage((p) => Math.min(totalPages, p + 1))
-                }
+                onClick={() => {
+                  setCurrentPage((p) => Math.min(totalPages, p + 1));
+                  searchParams.set(
+                    "page",
+                    Math.min(totalPages, currentPage + 1),
+                  );
+                }}
                 disabled={currentPage === totalPages}
                 className="px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
