@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { getProductById } from "../features/products/services/productService";
+import {
+  getProductById,
+  getReviewsByProductId,
+} from "../features/products/services/productService";
 import useCartStore from "../features/cart/hooks/useCartStore";
 import useWishlistStore from "../features/wishlist/hooks/useWishlistStore";
 import { GitCompare } from "lucide-react";
 import { useCompareStore } from "../features/compare/hooks/useCompareStore";
+import ProductReviews from "../features/products/components/ProductReviews";
 
 export default function ProductDetailsPage() {
   const navigate = useNavigate();
@@ -12,6 +16,7 @@ export default function ProductDetailsPage() {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [countdown, setCountdown] = useState(null);
+  const [reviews, setReviews] = useState([]);
   const addToCart = useCartStore((s) => s.addToCart);
   const addToWishlist = useWishlistStore((s) => s.addToWishlist);
   const isInWishlist = useWishlistStore((s) => s.isInWishlist(Number(id)));
@@ -22,6 +27,8 @@ export default function ProductDetailsPage() {
       setLoading(true);
       const p = await getProductById(id);
       setProduct(p);
+      const reviewsResponse = await getReviewsByProductId(id);
+      setReviews(reviewsResponse);
       setLoading(false);
     }
     load();
@@ -249,14 +256,7 @@ export default function ProductDetailsPage() {
 
           {/* Reviews Placeholder — Student task to implement */}
           <div className="mt-10 border-t border-gray-100 pt-8">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">
-              Customer Reviews
-            </h3>
-            <div className="bg-gray-50 rounded-xl p-6 text-center">
-              <p className="text-gray-400 text-sm">
-                Reviews will be displayed here.
-              </p>
-            </div>
+            <ProductReviews reviews={reviews} renderStars={renderStars} />
           </div>
         </div>
       </div>
