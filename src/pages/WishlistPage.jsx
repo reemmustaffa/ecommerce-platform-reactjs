@@ -1,11 +1,16 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useWishlistStore from "../features/wishlist/hooks/useWishlistStore";
 import useCartStore from "../features/cart/hooks/useCartStore";
+import { GitCompare } from "lucide-react";
+import { useCompareStore } from "../features/compare/hooks/useCompareStore";
 
 export default function WishlistPage() {
   const items = useWishlistStore((s) => s.items);
   const removeFromWishlist = useWishlistStore((s) => s.removeFromWishlist);
   const addToCart = useCartStore((s) => s.addToCart);
+
+  const navigate = useNavigate();
+  const addToCompare = useCompareStore((s) => s.addToCompare);
 
   if (items.length === 0) {
     return (
@@ -102,6 +107,15 @@ export default function WishlistPage() {
                       d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                     />
                   </svg>
+                </button>
+                <button
+                  onClick={() => {
+                    navigate("/compare");
+                    addToCompare(item);
+                  }}
+                  className="px-3 py-2 border border-gray-200 rounded-lg text-gray-400 "
+                >
+                  <GitCompare size={18} />
                 </button>
               </div>
             </div>

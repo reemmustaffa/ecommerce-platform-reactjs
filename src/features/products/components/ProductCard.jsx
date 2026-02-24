@@ -1,11 +1,16 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useCartStore from "../../cart/hooks/useCartStore";
 import useWishlistStore from "../../wishlist/hooks/useWishlistStore";
+import { GitCompare } from "lucide-react";
+import { useCompareStore } from "../../compare/hooks/useCompareStore";
 
 export default function ProductCard({ product }) {
   const addToCart = useCartStore((s) => s.addToCart);
   const addToWishlist = useWishlistStore((s) => s.addToWishlist);
   const isInWishlist = useWishlistStore((s) => s.isInWishlist(product.id));
+  const addToCompare = useCompareStore((s) => s.addToCompare);
+
+  const navigate = useNavigate();
 
   const renderStars = (rating) => {
     const stars = [];
@@ -75,26 +80,39 @@ export default function ProductCard({ product }) {
             Out of Stock
           </span>
         )}
-        {/* Wishlist button */}
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            addToWishlist(product);
-          }}
-          className={`absolute top-3 right-3 p-2 rounded-full shadow-md transition-all duration-200 cursor-pointer ${
-            isInWishlist
-              ? "bg-accent-500 text-white"
-              : "bg-white/90 text-gray-400 hover:text-accent-500"
-          }`}
-        >
-          <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
-            <path
-              fillRule="evenodd"
-              d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </button>
+        {/* Wishlist button && compare button */}
+        <div className="absolute top-3 flex items-center justify-between w-full px-3">
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/compare");
+              addToCompare(product);
+            }}
+            className={` left-3 p-2 bg-white/90 rounded-full shadow-md transition-all duration-200 cursor-pointer`}
+          >
+            <GitCompare size={18} />
+          </button>
+
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              addToWishlist(product);
+            }}
+            className={`p-2 rounded-full shadow-md transition-all duration-200 cursor-pointer ${
+              isInWishlist
+                ? "bg-accent-500 text-white"
+                : "bg-white/90 text-gray-400 hover:text-accent-500"
+            }`}
+          >
+            <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
+              <path
+                fillRule="evenodd"
+                d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </button>
+        </div>
       </Link>
 
       {/* Content */}
