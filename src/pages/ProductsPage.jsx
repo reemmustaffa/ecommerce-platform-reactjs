@@ -5,6 +5,7 @@ import {
 } from "../features/products/services/productService";
 import ProductCard from "../features/products/components/ProductCard";
 import { useSearchParams } from "react-router-dom";
+import ProductCardSkeleton from "../features/products/components/ProductCardSkeleton";
 
 export default function ProductsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -151,9 +152,10 @@ export default function ProductsPage() {
 
       {/* Loading Spinner */}
       {loading ? (
-        <div className="flex flex-col items-center justify-center py-24">
-          <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mb-4" />
-          <p className="text-gray-500 text-sm">Loading products...</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {Array.from({ length: 8 }).map((_, index) => (
+            <ProductCardSkeleton key={index} />
+          ))}
         </div>
       ) : (
         <>

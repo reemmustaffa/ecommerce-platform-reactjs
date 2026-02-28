@@ -45,7 +45,7 @@ export async function filterProducts({
   page = 1,
   limit = 8,
 } = {}) {
-  await wait(300);
+  await wait(500);
   let filtered = [...products];
 
   // Apply search
