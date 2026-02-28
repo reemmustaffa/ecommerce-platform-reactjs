@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import useCartStore from "../features/cart/hooks/useCartStore";
+import toast from "react-hot-toast";
 
 export default function CartPage() {
   const items = useCartStore((s) => s.items);
@@ -95,7 +96,10 @@ export default function CartPage() {
                     </p>
                   </div>
                   <button
-                    onClick={() => removeFromCart(item.id)}
+                    onClick={() => {
+                      removeFromCart(item.id);
+                      toast.success(`product removed from cart`);
+                    }}
                     className="text-gray-400 hover:text-red-500 transition-colors shrink-0"
                   >
                     <svg
@@ -120,7 +124,7 @@ export default function CartPage() {
                     <button
                       onClick={() => updateQuantity(item.id, item.quantity - 1)}
                       disabled={item.quantity <= 1} // Disable button if quantity is 1 or less
-                      className={`w-8 h-8 flex items-center justify-center text-gray-500 hover:text-primary-600 transition-colors ${item.quantity <= 1 ? "opacity-50 cursor-not-allowed" : ""}`}
+                      className={`w-8 h-8 flex items-center justify-center text-gray-500 hover:text-primary-600 transition-colors ${item.quantity <= 1 ? "opacity-50 cursor-not-allowed bg-gray-100" : ""}`}
                     >
                       −
                     </button>

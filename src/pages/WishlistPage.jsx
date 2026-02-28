@@ -3,6 +3,7 @@ import useWishlistStore from "../features/wishlist/hooks/useWishlistStore";
 import useCartStore from "../features/cart/hooks/useCartStore";
 import { GitCompare } from "lucide-react";
 import { useCompareStore } from "../features/compare/hooks/useCompareStore";
+import toast from "react-hot-toast";
 
 export default function WishlistPage() {
   const items = useWishlistStore((s) => s.items);
@@ -83,6 +84,7 @@ export default function WishlistPage() {
                 <button
                   onClick={() => {
                     addToCart(item);
+                    toast.success(`product added to cart successfully`);
                     // Note: removeFromWishlist is not fully implemented
                     // removeFromWishlist(item.id);
                   }}
@@ -91,7 +93,10 @@ export default function WishlistPage() {
                   Move to Cart
                 </button>
                 <button
-                  onClick={() => removeFromWishlist(item.id)}
+                  onClick={() => {
+                    removeFromWishlist(item.id);
+                    toast.success(`product removed from wishlist`);
+                  }}
                   className="px-3 py-2 border border-gray-200 rounded-lg text-gray-400 hover:text-red-500 hover:border-red-200 transition-all"
                 >
                   <svg
@@ -112,6 +117,7 @@ export default function WishlistPage() {
                   onClick={() => {
                     navigate("/compare");
                     addToCompare(item);
+                    toast.success(`product added to compare`);
                   }}
                   className="px-3 py-2 border border-gray-200 rounded-lg text-gray-400 "
                 >

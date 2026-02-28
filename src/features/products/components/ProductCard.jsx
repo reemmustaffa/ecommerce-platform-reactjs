@@ -3,6 +3,7 @@ import useCartStore from "../../cart/hooks/useCartStore";
 import useWishlistStore from "../../wishlist/hooks/useWishlistStore";
 import { GitCompare } from "lucide-react";
 import { useCompareStore } from "../../compare/hooks/useCompareStore";
+import toast from "react-hot-toast";
 
 export default function ProductCard({ product }) {
   const addToCart = useCartStore((s) => s.addToCart);
@@ -87,6 +88,7 @@ export default function ProductCard({ product }) {
               e.preventDefault();
               navigate("/compare");
               addToCompare(product);
+              toast.success(`product added to compare`);
             }}
             className={` left-3 p-2 bg-white/90 rounded-full shadow-md transition-all duration-200 cursor-pointer`}
           >
@@ -97,6 +99,9 @@ export default function ProductCard({ product }) {
             onClick={(e) => {
               e.preventDefault();
               addToWishlist(product);
+              isInWishlist
+                ? toast.success(`product removed from wishlist`)
+                : toast.success(`product added to wishlist`);
             }}
             className={`p-2 rounded-full shadow-md transition-all duration-200 cursor-pointer ${
               isInWishlist
@@ -137,7 +142,10 @@ export default function ProductCard({ product }) {
             ${product.price.toFixed(2)}
           </span>
           <button
-            onClick={() => addToCart(product)}
+            onClick={() => {
+              addToCart(product);
+              toast.success(`product added to cart successfully`);
+            }}
             disabled={product.stock === 0}
             className="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded-lg hover:bg-primary-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
           >
